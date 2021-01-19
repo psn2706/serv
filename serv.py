@@ -17,6 +17,7 @@ if __name__ == "__main__":
 
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
     try:
+        print('Quit the server with CTRL-BREAK.')
         server.serve_forever()
     except KeyboardInterrupt:
         print()
