@@ -7,8 +7,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     # noinspection PyAttributeOutsideInit
     def handle(self):
         self.data = self.request.recv(2 ** 20).strip()
+        s = '\nПривет, мой друг!'
         print("{} wrote:".format(self.client_address[0]))
         print(str(self.data, "utf-8"))
+        self.data = self.data+s.encode("utf-8")
         self.request.sendall(self.data.upper())
 
 
