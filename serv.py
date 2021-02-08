@@ -11,7 +11,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         s = '\nПривет, мой друг!'
         print(f"{self.client_address[0]} wrote from {threading.current_thread().name}:")
         print(str(self.data, "utf-8"))
-        input()
         self.data = self.data+s.encode("utf-8")
         self.request.sendall(self.data)
 
