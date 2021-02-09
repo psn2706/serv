@@ -4,41 +4,8 @@ import threading
 from random import randint
 
 
-class MyTCPHandler(socketserver.BaseRequestHandler):
-
-    # noinspection PyAttributeOutsideInit
-    def handle(self):
-        data = self.request.recv(2 ** 20).strip()
-        ans = lab.handle(data)
-        self.request.sendall(ans)
-
-
-class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    pass
-
-
-def runserver():
-    HOST, PORT = socket.gethostbyname(socket.gethostname()), 8000
-    server = ThreadedTCPServer((HOST, PORT), MyTCPHandler)
-    try:
-        print(f'Connected to {HOST}:{PORT}')
-        print('Quit the server with CTRL-BREAK.')
-        server_thread = threading.Thread(target=server.serve_forever)
-        # Exit the server thread when the main thread terminates
-        server_thread.daemon = True
-        server_thread.start()
-        while True:
-            pass
-    except KeyboardInterrupt:
-        print()
-
-
-if __name__ == "__main__":
-    runserver()
-
-
 def massRand(m):
-    Sum = [0] * len(m)
+    Sum = [0] * (len(m)+1)
     for i in range(len(m)):
         Sum[i + 1] = Sum[i] + m[i]
     r = randint(0, Sum[len(m)] - 1)
@@ -126,3 +93,36 @@ class lab:
         if s == 'CLEAR':
             lab.inside[x], lab.devices[x], lab.waiters[x] = [0]*3
             lab.names[x], lab.parms[x], lab.action[x] = ['']*3
+
+
+class MyTCPHandler(socketserver.BaseRequestHandler):
+
+    # noinspection PyAttributeOutsideInit
+    def handle(self):
+        data = self.request.recv(2 ** 20).strip()
+        ans = lab.handle(data.decode("utf-8"))
+        self.request.sendall(ans.encode("utf-8"))
+
+
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
+
+
+def runserver():
+    HOST, PORT = socket.gethostbyname(socket.gethostname()), 8000
+    server = ThreadedTCPServer((HOST, PORT), MyTCPHandler)
+    try:
+        print(f'Connected to {HOST}:{PORT}')
+        print('Quit the server with CTRL-BREAK.')
+        server_thread = threading.Thread(target=server.serve_forever)
+        # Exit the server thread when the main thread terminates
+        server_thread.daemon = True
+        server_thread.start()
+        while True:
+            pass
+    except KeyboardInterrupt:
+        print()
+
+
+if __name__ == "__main__":
+    runserver()
