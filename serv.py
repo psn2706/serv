@@ -2,6 +2,7 @@ import socketserver
 import socket
 import threading
 from random import randint
+from time import sleep
 
 
 def massRand(m):
@@ -82,13 +83,16 @@ class lab:
             lab.waiters[x] += 1
             while lab.waiters[x] < lab.devices[x]:
                 pass
-            if lab.waiters[x] == lab.devices[x]:
+            if lab.waiters[x] != 0:
                 lab.waiters[x] = 0
             if lab.action[x] != '':
                 lab.action[x] = ''
+            sleep(0.1)
             return '0'
         if s == 'DELETE':
-            lab.rooms[x] = 1
+            lab.rooms[x] = 1,
+            lab.inside[x], lab.devices[x], lab.waiters[x] = [0]*3
+            lab.names[x], lab.parms[x], lab.action[x] = ['']*3
             return '0'
         if s == 'CLEAR':
             lab.inside[x], lab.devices[x], lab.waiters[x] = [0]*3
