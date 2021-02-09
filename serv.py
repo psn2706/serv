@@ -2,11 +2,10 @@ import socketserver
 import socket
 import threading
 from random import randint
-from time import sleep
 
 
 def massRand(m):
-    Sum = [0] * (len(m)+1)
+    Sum = [0] * (len(m) + 1)
     for i in range(len(m)):
         Sum[i + 1] = Sum[i] + m[i]
     r = randint(0, Sum[len(m)] - 1)
@@ -23,6 +22,7 @@ class lab:
     inside = [0] * count
     devices = [0] * count
     waiters = [0] * count
+    antiwaiters = [0] * count
     names = [''] * count
     parms = [''] * count
     action = [''] * count
@@ -53,8 +53,8 @@ class lab:
             if lab.rooms[x] == 1:
                 return 'Такой комнаты нет'
             n, m = lab.sizes[x], lab.inside[x]
-            if m+k > n:
-                return f'Эта комната столько игроков не вместит. Свободно {n-m} мест'
+            if m + k > n:
+                return f'Эта комната столько игроков не вместит. Свободно {n - m} мест'
             lab.names[x] += nam
             lab.parms[x] = par
             lab.devices[x] += 1
@@ -83,20 +83,19 @@ class lab:
             lab.waiters[x] += 1
             while lab.waiters[x] < lab.devices[x]:
                 pass
-            if lab.waiters[x] != 0:
-                lab.waiters[x] = 0
-            if lab.action[x] != '':
+            lab.antiwaiters[x] += 1
+            if lab.antiwaiters[x] == lab.devices[x]:
+                lab.antiwaiters[x] = lab.waiters[x] = 0
                 lab.action[x] = ''
-            sleep(0.1)
             return '0'
         if s == 'DELETE':
-            lab.rooms[x] = 1,
-            lab.inside[x], lab.devices[x], lab.waiters[x] = [0]*3
-            lab.names[x], lab.parms[x], lab.action[x] = ['']*3
+            lab.rooms[x] = 1
+            lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.antiwaiters[x] = 0
+            lab.names[x] = lab.parms[x] = lab.action[x] = ''
             return '0'
         if s == 'CLEAR':
-            lab.inside[x], lab.devices[x], lab.waiters[x] = [0]*3
-            lab.names[x], lab.parms[x], lab.action[x] = ['']*3
+            lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.antiwaiters[x] = 0
+            lab.names[x] = lab.parms[x] = lab.action[x] = ''
 
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
