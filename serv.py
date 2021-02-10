@@ -32,6 +32,7 @@ class lab:
     def clear(x):
         lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.locked[x] = [0]
         lab.names[x] = lab.parms[x] = lab.action[x] = ['']
+        lab.lock[x] = False  # it's no important
 
     @staticmethod
     def handle(a):
