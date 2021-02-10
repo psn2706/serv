@@ -22,10 +22,16 @@ class lab:
     inside = [0] * count
     devices = [0] * count
     waiters = [0] * count
-    antiwaiters = [0] * count
+    locked = [0] * count
+    lock = [False] * count
     names = [''] * count
     parms = [''] * count
     action = [''] * count
+
+    @staticmethod
+    def clear(x):
+        lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.locked[x] = [0]
+        lab.names[x] = lab.parms[x] = lab.action[x] = ['']
 
     @staticmethod
     def handle(a):
@@ -64,9 +70,17 @@ class lab:
             s = a[pos + 1:]
             action, x = map(str, s.split(','))
             x = int(x)
+
+            while lab.lock[x]:
+                pass
+
             lab.action[x] = action
             return '0'
         x = int(a[pos + 1:])
+
+        while lab.lock[x]:
+            pass
+
         if s == 'RWAIT':
             while lab.inside[x] < lab.sizes[x]:
                 pass
@@ -83,19 +97,21 @@ class lab:
             lab.waiters[x] += 1
             while lab.waiters[x] < lab.devices[x]:
                 pass
-            lab.antiwaiters[x] += 1
-            if lab.antiwaiters[x] == lab.devices[x]:
-                lab.antiwaiters[x] = lab.waiters[x] = 0
+            lab.lock[x] = True
+            lab.locked[x] += 1
+            if lab.locked[x] == lab.devices[x]:
+                lab.lock[x] = False
+                lab.locked[x] = lab.waiters[x] = 0
                 lab.action[x] = ''
             return '0'
         if s == 'DELETE':
             lab.rooms[x] = 1
-            lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.antiwaiters[x] = 0
-            lab.names[x] = lab.parms[x] = lab.action[x] = ''
+            lab.sizes[x] = 0
+            lab.clear(x)
             return '0'
         if s == 'CLEAR':
-            lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.antiwaiters[x] = 0
-            lab.names[x] = lab.parms[x] = lab.action[x] = ''
+            lab.clear(x)
+            return '0'
 
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
