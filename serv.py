@@ -32,7 +32,7 @@ class lab:
     def clear(x):
         lab.inside[x] = lab.devices[x] = lab.waiters[x] = lab.locked[x] = 0
         lab.names[x] = lab.parms[x] = lab.action[x] = ''
-        lab.lock[x] = False  # it's no important
+        lab.lock[x] = False
 
     @staticmethod
     def handle(a):
@@ -74,13 +74,27 @@ class lab:
 
             while lab.lock[x]:
                 pass
+            if lab.inside[x] == 0:
+                return '0'
 
             lab.action[x] = action
             return '0'
+
         x = int(a[pos + 1:])
+
+        if s == 'DELETE':
+            lab.rooms[x] = 1
+            lab.sizes[x] = 0
+            lab.clear(x)
+            return '0'
+        if s == 'CLEAR':
+            lab.clear(x)
+            return '0'
 
         while lab.lock[x]:
             pass
+        if lab.inside[x] == 0:
+            return '0'
 
         if s == 'RWAIT':
             while lab.inside[x] < lab.sizes[x]:
@@ -104,14 +118,6 @@ class lab:
                 lab.lock[x] = False
                 lab.locked[x] = lab.waiters[x] = 0
                 lab.action[x] = ''
-            return '0'
-        if s == 'DELETE':
-            lab.rooms[x] = 1
-            lab.sizes[x] = 0
-            lab.clear(x)
-            return '0'
-        if s == 'CLEAR':
-            lab.clear(x)
             return '0'
 
 
