@@ -36,27 +36,26 @@ class lab:
 
     @staticmethod
     def handle(a):
-        pos = a.find(' ')
-        s = a[0:pos]
+        sep = '#'
+        v = list(map(str, a.split(sep)))
+        s = v[0]
         if s == 'CREATE':
+            n = int(v[1])
             x = massRand(lab.rooms)
             if x == -1:
                 return 'Нет места'
             lab.rooms[x] = 0
-            lab.sizes[x] = int(a[pos + 1:])
+            lab.sizes[x] = n
             return f'Успешно! Ваш номер комнаты <{x}>'
         if s == 'CREATEX':
-            s = a[pos + 1:]
-            n, x = map(int, s.split(','))
+            n, x = int(v[1]), int(v[2])
             if lab.rooms[x] == 0:
                 return 'Нет места'
             lab.rooms[x] = 0
             lab.sizes[x] = n
             return f'Успешно! Ваш номер комнаты <{x}>'
         if s == 'JOIN':
-            s = a[pos + 1:]
-            k, x, nam, par = map(str, s.split(','))
-            k, x = int(k), int(x)
+            k, x, nam, par = int(v[1]), int(v[2]), v[3], v[4]
             if lab.rooms[x] == 1:
                 return 'Такой комнаты нет'
             n, m = lab.sizes[x], lab.inside[x]
@@ -68,9 +67,7 @@ class lab:
             lab.inside[x] += k
             return str(m)
         if s == 'SET':
-            s = a[pos + 1:]
-            action, x = map(str, s.split(','))
-            x = int(x)
+            x, action = int(v[1]), v[2]
 
             while lab.lock[x]:
                 pass
@@ -80,8 +77,7 @@ class lab:
             lab.action[x] = action
             return '0'
 
-        x = int(a[pos + 1:])
-
+        x = int(v[1])
         if s == 'DELETE':
             lab.rooms[x] = 1
             lab.sizes[x] = 0
