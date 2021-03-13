@@ -66,8 +66,10 @@ class lab:
             lab.devices[x] += 1
             lab.inside[x] += k
             return str(m)
+        x = int(v[1])
+
         if s == 'SET':
-            x, action = int(v[1]), v[2]
+            action = v[2]
 
             while lab.lock[x]:
                 pass
@@ -77,7 +79,6 @@ class lab:
             lab.action[x] = action
             return '0'
 
-        x = int(v[1])
         if s == 'DELETE':
             lab.rooms[x] = 1
             lab.sizes[x] = 0
@@ -93,7 +94,7 @@ class lab:
             return '0'
 
         if s == 'RWAIT':
-            while lab.inside[x] < lab.sizes[x]:
+            while 0 < lab.inside[x] < lab.sizes[x]:
                 pass
             return '0'
         if s == 'NAM':
@@ -101,12 +102,12 @@ class lab:
         if s == 'PAR':
             return lab.parms[x]
         if s == 'GET':
-            while lab.action[x] == '':
+            while lab.action[x] == '' and lab.inside[x] > 0:
                 pass
             return lab.action[x]
         if s == 'WAIT':
             lab.waiters[x] += 1
-            while lab.waiters[x] < lab.devices[x]:
+            while lab.waiters[x] < lab.devices[x] and lab.inside[x] > 0:
                 pass
             lab.lock[x] = True
             lab.locked[x] += 1
